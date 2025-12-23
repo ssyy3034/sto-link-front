@@ -147,13 +147,12 @@ export default function LibraryPage() {
             {/* Top Row: Brand & Mobile Menu */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">✒️</span>
-                </div>
-                <div>
-                  <h1 className="font-heading text-2xl font-bold text-foreground tracking-tight">
-                    Sto-Link
-                  </h1>
+                <div className="flex items-center">
+                  <img
+                    src="/src/assets/main_logo.png"
+                    alt="Sto-Link"
+                    className="h-12 w-auto"
+                  />
                 </div>
                 <div className="h-8 w-px bg-stone-300 mx-1 hidden sm:block"></div>
                 <span className="text-muted-foreground font-medium hidden sm:block">
@@ -324,7 +323,11 @@ export default function LibraryPage() {
       <footer className="border-t border-stone-200 py-8 mt-auto bg-paper">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-400 font-medium gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-stone-600">Sto-Link</span>
+            <img
+              src="/src/assets/main_logo.png"
+              alt="Sto-Link"
+              className="h-9 w-auto opacity-70 grayscale hover:grayscale-0 transition-all"
+            />
             <span>•</span>
             <span>v1.0.0</span>
           </div>
