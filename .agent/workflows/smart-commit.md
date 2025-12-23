@@ -17,6 +17,6 @@ description: Automatically generate commit messages, push changes, and guide PR 
     - Run `git push origin <current_branch>`
 
 4.  **PR Creation & AI Review**:
-    - If `gh` CLI is available, run `gh pr create --title "generated_message" --body "Auto-generated PR for AI Review"`.
+    - If `gh` CLI is available, run `gh pr create --title "generated_message" --body "## 변경 사항\n- (AI가 분석한 한글 변경 내용 요약)\n\n## AI 리뷰\n이 PR은 AI 코드 리뷰를 자동 트리거합니다."`.
     - If not, generate a link to create a PR: `https://github.com/ssyy3034/sto-link-front/compare/main...<current_branch>?expand=1`
     - **Important**: Creating a PR will automatically trigger the AI Code Reviewer configured in `.github/workflows/ai-review.yml`.
