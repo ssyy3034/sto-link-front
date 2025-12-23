@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/common/Footer";
 import {
   PenLine,
   GitBranch,
@@ -275,163 +276,53 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-28 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-stone-50/30 -z-10" />
+      {/* Stats / Social Proof Section */}
+      <section className="py-24 px-4 bg-ink">
         <motion.div
-          className="max-w-5xl mx-auto rounded-3xl bg-ink p-12 sm:p-24 text-center relative shadow-2xl overflow-hidden"
-          initial={{ opacity: 0, y: 40 }}
+          className="max-w-5xl mx-auto text-center"
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
         >
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-sage-500/10 rounded-full blur-[100px] -mr-48 -mt-48" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-sage-500/10 rounded-full blur-[100px] -ml-48 -mb-48" />
-
-          <h2 className="text-4xl sm:text-6xl font-bold text-white mb-8 font-heading relative z-10 leading-[1.1]">
-            지금 바로 당신의 이야기를
-            <br className="hidden lg:block" /> 새롭게 시작하세요
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 font-heading">
+            창작자들이 선택한 이유
           </h2>
-          <p className="text-stone-400 text-xl mb-12 max-w-xl mx-auto font-light leading-relaxed relative z-10">
-            복잡한 설정집을 뒤적이는 시간은 이제 끝났습니다.
-            <br />
-            창작자의 상상을 완성하는 단 하나의 파트너.
+          <p className="text-stone-400 mb-16 text-lg font-light">
+            StoLink와 함께라면, 이야기에만 집중할 수 있습니다.
           </p>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative z-10"
-          >
-            <Link to="/auth">
-              <Button
-                size="lg"
-                className="px-14 h-18 text-xl bg-sage-500 hover:bg-sage-600 text-white shadow-[0_8px_30px_rgb(119,153,136,0.4)] rounded-2xl"
-              >
-                무료로 시작하기
-                <ChevronRight className="ml-2 h-6 w-6" />
-              </Button>
-            </Link>
-          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <div className="space-y-2">
+              <p className="text-4xl sm:text-5xl font-bold text-sage-400 font-heading">
+                50%
+              </p>
+              <p className="text-stone-400 text-sm">시간 절약</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-4xl sm:text-5xl font-bold text-sage-400 font-heading">
+                ∞
+              </p>
+              <p className="text-stone-400 text-sm">무제한 작품</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-4xl sm:text-5xl font-bold text-sage-400 font-heading">
+                AI
+              </p>
+              <p className="text-stone-400 text-sm">스마트 분석</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-4xl sm:text-5xl font-bold text-sage-400 font-heading">
+                0원
+              </p>
+              <p className="text-stone-400 text-sm">시작 비용</p>
+            </div>
+          </div>
         </motion.div>
       </section>
 
       {/* Footer */}
-      <footer className="py-20 px-4 bg-white border-t border-stone-100">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-12 sm:gap-16">
-            <div className="space-y-6 text-center md:text-left">
-              <img
-                src="/src/assets/main_logo.png"
-                alt="Sto-Link"
-                className="h-14 w-auto mx-auto md:mx-0 opacity-80"
-              />
-              <p className="text-stone-500 text-base max-w-xs font-light leading-relaxed">
-                이야기의 파편들을 잇는 가장 스마트한 방법.
-                <br />
-                창작자를 위한 최적의 워크스페이스입니다.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-12 sm:gap-20">
-              <div className="space-y-6">
-                <h4 className="text-ink font-bold text-sm tracking-[0.2em] uppercase border-b-2 border-sage-500 w-fit pb-1">
-                  Product
-                </h4>
-                <ul className="space-y-3 text-stone-500 text-sm font-medium">
-                  <li>
-                    <a
-                      href="#"
-                      className="hover:text-sage-600 transition-all flex items-center gap-2"
-                    >
-                      Features
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="hover:text-sage-600 transition-all flex items-center gap-2"
-                    >
-                      Pricing
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="hover:text-sage-600 transition-all flex items-center gap-2"
-                    >
-                      Showcase
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className="space-y-6">
-                <h4 className="text-ink font-bold text-sm tracking-[0.2em] uppercase border-b-2 border-sage-100 w-fit pb-1">
-                  Company
-                </h4>
-                <ul className="space-y-3 text-stone-500 text-sm font-medium">
-                  <li>
-                    <a href="#" className="hover:text-sage-600 transition-all">
-                      About Us
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-sage-600 transition-all">
-                      Contact
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-sage-600 transition-all">
-                      Blog
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className="space-y-6 col-span-2 lg:col-span-1">
-                <h4 className="text-ink font-bold text-sm tracking-[0.2em] uppercase border-b-2 border-stone-100 w-fit pb-1">
-                  Legal
-                </h4>
-                <ul className="space-y-3 text-stone-500 text-sm font-medium">
-                  <li>
-                    <a href="#" className="hover:text-sage-600 transition-all">
-                      Terms of Service
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-sage-600 transition-all">
-                      Privacy Policy
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="mt-20 pt-10 border-t border-stone-50 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <p className="text-stone-400 text-xs font-bold tracking-tight">
-              © 2024 STOLINK. ALL RIGHTS RESERVED. DESIGNED FOR THE NEXT
-              GENERATION OF STORYTELLERS.
-            </p>
-            <div className="flex gap-8">
-              <a
-                href="#"
-                className="text-stone-300 hover:text-sage-500 transition-colors transform hover:-translate-y-1"
-              >
-                <Users size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-stone-300 hover:text-sage-600 transition-colors transform hover:-translate-y-1"
-              >
-                <GitBranch size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-stone-300 hover:text-ink transition-colors transform hover:-translate-y-1"
-              >
-                <FileText size={20} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

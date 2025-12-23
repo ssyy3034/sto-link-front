@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Search, LayoutGrid, List, Filter, ArrowUpDown } from "lucide-react";
+import { motion } from "framer-motion";
+import { Footer } from "@/components/common/Footer";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -138,11 +140,26 @@ export default function LibraryPage() {
     project.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
     <div className="min-h-screen bg-paper">
       {/* Header Section */}
-      <header className="sticky top-0 z-50 bg-paper/95 backdrop-blur-sm border-b border-stone-200/50">
-        <div className="max-w-7xl mx-auto px-6 py-5">
+      <header className="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-stone-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex flex-col gap-6">
             {/* Top Row: Brand & Mobile Menu */}
             <div className="flex items-center justify-between">
@@ -270,25 +287,39 @@ export default function LibraryPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8 pb-32">
-        {/* Stats Row (Optional, implied by "Stats" usually found in dash) */}
+      <main className="max-w-7xl mx-auto px-6 py-10 pb-32">
+        {/* Page Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h2 className="text-2xl font-heading font-bold text-ink">내 서재</h2>
+        </motion.div>
 
-        <div
+        <motion.div
           className={cn(
-            "grid gap-6",
+            "grid gap-8",
             viewMode === "grid"
               ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
               : "grid-cols-1",
           )}
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
         >
           {/* Create New Book Card */}
-          <div className="h-full min-h-[320px]">
+          <motion.div variants={itemVariants} className="h-full min-h-[320px]">
             <CreateBookCard onClick={() => setCreateProjectModalOpen(true)} />
-          </div>
+          </motion.div>
 
           {/* Project List */}
           {filteredProjects.map((project) => (
-            <div key={project.id} className="h-full min-h-[320px]">
+            <motion.div
+              key={project.id}
+              variants={itemVariants}
+              className="h-full min-h-[320px]"
+            >
               <BookCard
                 title={project.title}
                 author={project.author || "Author"}
@@ -302,9 +333,9 @@ export default function LibraryPage() {
                 onClick={() => navigate(`/projects/${project.id}/editor`)}
                 onAction={(action) => console.log(action, project.title)}
               />
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {filteredProjects.length === 0 && searchQuery && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -320,31 +351,7 @@ export default function LibraryPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-stone-200 py-8 mt-auto bg-paper">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-400 font-medium gap-4">
-          <div className="flex items-center gap-2">
-            <img
-              src="/src/assets/main_logo.png"
-              alt="Sto-Link"
-              className="h-9 w-auto opacity-70 grayscale hover:grayscale-0 transition-all"
-            />
-            <span>•</span>
-            <span>v1.0.0</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-stone-600">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-stone-600">
-              Terms
-            </a>
-            <a href="#" className="hover:text-stone-600">
-              Help
-            </a>
-            <span>© 2024 Sto-Link Platform. All rights reserved.</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
