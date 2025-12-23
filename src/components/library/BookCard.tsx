@@ -8,9 +8,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-// eslint-disable-next-line react-refresh/only-export-components
-export { Badge, badgeVariants } from "@/components/ui/badge-variants";
-
 export type ProjectStatus =
   | "DRAFTING"
   | "OUTLINE"

@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { PenLine, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -109,11 +109,12 @@ export default function AuthPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <PenLine className="h-8 w-8 text-sage-500" />
-          <span className="text-3xl font-heading font-bold text-ink">
-            Sto-link
-          </span>
+        <Link to="/" className="flex items-center justify-center mb-8">
+          <img
+            src="/src/assets/main_logo.png"
+            alt="Sto-Link"
+            className="h-24 w-auto"
+          />
         </Link>
 
         <Card>

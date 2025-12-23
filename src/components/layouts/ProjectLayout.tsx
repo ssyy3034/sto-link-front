@@ -1,10 +1,19 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useParams, useNavigate } from 'react-router-dom';
-import { PenLine, BookOpen, BarChart3, Download, Settings, User, LogOut, Eye } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/stores';
-import { BookReaderModal } from '@/components/common/BookReaderModal';
+import { useState } from "react";
+import { NavLink, Outlet, useParams, useNavigate } from "react-router-dom";
+import {
+  PenLine,
+  BookOpen,
+  BarChart3,
+  Download,
+  Settings,
+  User,
+  LogOut,
+  Eye,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores";
+import { BookReaderModal } from "@/components/common/BookReaderModal";
 
 export function ProjectLayout() {
   const { id } = useParams<{ id: string }>();
@@ -16,8 +25,8 @@ export function ProjectLayout() {
   // 미리보기용 데모 챕터 데이터 (충분한 분량)
   const demoChapters = [
     {
-      id: 'ch1',
-      title: '1장: 운명의 밤',
+      id: "ch1",
+      title: "1장: 운명의 밤",
       content: `건조한 날씨가 계속되던 어느 봄날, 마을 외곽의 오래된 숲속에서 한 아이가 태어났다. 그 아이의 울음소리는 어디선가 불어온 바람을 타고 멀리 퍼져나갔다. 마을 사람들은 그 소리를 듣고도 아무도 그쪽으로 가려 하지 않았다. 숲은 오래전부터 금기의 땅이었기 때문이다.
 
 그날 밤, 하늘에는 유난히 밝은 별이 떠 있었다. 마을 사람들은 그것이 좋은 징조라고 수군대며 이야기했지만, 장로의 집에서 어둠 속을 지키던 노인만이 그 의미를 진정으로 알고 있었다. 그는 고대 문헌에서 이 별에 대해 읽은 적이 있었다. "운명의 별"이라 불리는 그것은 천 년에 한 번 나타난다고 했다.
@@ -28,11 +37,11 @@ export function ProjectLayout() {
 
 노인은 방을 나서며 밤하늘을 올려다보았다. 별은 여전히 빛나고 있었다. 하지만 그 빛 속에는 어딘가 불길한 그림자가 드리워져 있는 것 같았다. "시작되는구나..." 그는 읊조렸다. "천 년 만에 다시, 모든 것이 시작되는구나."
 
-다음 날 아침, 마을에는 이상한 소문이 돌기 시작했다. 숲속에서 태어난 아이가 기이한 힘을 가지고 있다는 것이었다. 물론 그것은 단순한 미신일 수도 있었다. 하지만 마을 사람들의 눈빛은 이미 경계심으로 물들어 있었다.`
+다음 날 아침, 마을에는 이상한 소문이 돌기 시작했다. 숲속에서 태어난 아이가 기이한 힘을 가지고 있다는 것이었다. 물론 그것은 단순한 미신일 수도 있었다. 하지만 마을 사람들의 눈빛은 이미 경계심으로 물들어 있었다.`,
     },
     {
-      id: 'ch2',
-      title: '2장: 첫 만남',
+      id: "ch2",
+      title: "2장: 첫 만남",
       content: `십 년의 세월이 흐른 뒤, 소년은 마을의 가장 큰 나무 아래에서 목검을 수련하고 있었다. 그의 움직임은 정확하고 날카로웠다. 누가 가르쳐 준 것도 아닌데, 그는 마치 태어날 때부터 검을 잡아 본 것처럼 자연스러웠다.
 
 확 트인 공터. 나무 기둥에 걸어둔 향주머니에 목검이 정확히 꽂혔다. 소년은 만족스러운 듯 고개를 끄덕였다. 하지만 그의 눈빛에는 어딘가 공허함이 서려 있었다. 마을에서 그를 친구로 받아들이는 아이는 거의 없었다. "저주받은 아이"라는 낙인이 그를 따라다녔기 때문이다.
@@ -49,11 +58,11 @@ export function ProjectLayout() {
 
 "응, 정말이야. 하지만..." 소녀는 소년의 목검을 가리키며 말했다. "그 검술, 어디서 배운 거야? 보통이 아닌데."
 
-소년은 고개를 저었다. "배운 적 없어요. 그냥... 할 수 있게 됐어요." 그의 대답에 소녀의 눈빛이 미묘하게 변했다. 하지만 소년은 그것을 눈치채지 못했다.`
+소년은 고개를 저었다. "배운 적 없어요. 그냥... 할 수 있게 됐어요." 그의 대답에 소녀의 눈빛이 미묘하게 변했다. 하지만 소년은 그것을 눈치채지 못했다.`,
     },
     {
-      id: 'ch3',
-      title: '3장: 시련',
+      id: "ch3",
+      title: "3장: 시련",
       content: `"막아야 한다!" 소년이 소리쳤다. 그러나 그의 목소리는 폭풍우 속에 묻히고 말았다. 하늘은 검은 구름으로 뒤덮이고, 번개가 끊임없이 내리치고 있었다. 이런 날씨는 이 마을에서 본 적이 없었다.
 
 검은 기운이 마을을 덮쳤다. 그 속에서 소년은 어린 시절부터 자신을 따라다니던 이상한 느낌을 다시 한번 감지했다. 가슴 속에서 뜨거운 무언가가 꿈틀거리고 있었다. 그것은 두려움이 아니었다. 오히려 그 반대에 가까웠다.
@@ -70,21 +79,21 @@ export function ProjectLayout() {
 
 바람이 거세게 불었다. 소년의 은발이 휘날렸다. 그의 눈이 순간 금빛으로 빛났다. 본인도 몰랐던 힘이 깨어나려 하고 있었다.
 
-"이 아이를 건드리지 마!" 어디선가 익숙한 목소리가 들려왔다. 돌아보니 그 은발의 소녀가 서 있었다. 하지만 그녀의 모습은 처음 만났을 때와는 완전히 달랐다. 그녀의 손에는 빛나는 검이 들려 있었고, 온몸에서 푸른 오오라가 피어오르고 있었다.`
+"이 아이를 건드리지 마!" 어디선가 익숙한 목소리가 들려왔다. 돌아보니 그 은발의 소녀가 서 있었다. 하지만 그녀의 모습은 처음 만났을 때와는 완전히 달랐다. 그녀의 손에는 빛나는 검이 들려 있었고, 온몸에서 푸른 오오라가 피어오르고 있었다.`,
     },
   ];
 
   const navItems = [
-    { to: `/projects/${id}/editor`, label: '에디터', icon: PenLine },
-    { to: `/projects/${id}/world`, label: '설정집', icon: BookOpen },
-    { to: `/projects/${id}/stats`, label: '통계', icon: BarChart3 },
-    { to: `/projects/${id}/export`, label: '파일', icon: Download },
-    { to: `/projects/${id}/settings`, label: '관리', icon: Settings },
+    { to: `/projects/${id}/editor`, label: "에디터", icon: PenLine },
+    { to: `/projects/${id}/world`, label: "설정집", icon: BookOpen },
+    { to: `/projects/${id}/stats`, label: "통계", icon: BarChart3 },
+    { to: `/projects/${id}/export`, label: "파일", icon: Download },
+    { to: `/projects/${id}/settings`, label: "관리", icon: Settings },
   ];
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -93,16 +102,38 @@ export function ProjectLayout() {
       <header className="h-14 border-b bg-paper flex items-center justify-between px-4 shrink-0 z-20 relative">
         {/* Left: Navigation & Title */}
         <div className="flex items-center gap-4 min-w-[240px]">
-          <button
-            onClick={() => navigate('/library')}
-            className="p-2 hover:bg-stone-100 rounded-lg transition-colors text-muted-foreground hover:text-foreground"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/library")}
+              className="p-1.5 hover:bg-stone-100 rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+            <div className="h-6 w-px bg-stone-200" />
+            <img
+              src="/src/assets/main_logo.png"
+              alt="Sto-Link"
+              className="h-12 w-auto"
+            />
+          </div>
 
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <h1 className="font-heading font-semibold text-sm text-foreground">마법사의 여정</h1>
+              <h1 className="font-heading font-semibold text-sm text-foreground">
+                마법사의 여정
+              </h1>
               <span className="px-1.5 py-0.5 rounded-md bg-stone-100 text-[10px] font-medium text-stone-600 border border-stone-200">
                 DRAFT 1
               </span>
@@ -120,13 +151,13 @@ export function ProjectLayout() {
             <NavLink
               key={item.to}
               to={item.to}
-              data-tour={item.to.includes('world') ? 'world-tab' : undefined}
+              data-tour={item.to.includes("world") ? "world-tab" : undefined}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200',
+                  "flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200",
                   isActive
-                    ? 'bg-white text-sage-600 shadow-sm border-stone-200'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-stone-200/50'
+                    ? "bg-white text-sage-600 shadow-sm border-stone-200"
+                    : "text-muted-foreground hover:text-foreground hover:bg-stone-200/50",
                 )
               }
             >
@@ -138,7 +169,6 @@ export function ProjectLayout() {
 
         {/* Right: Actions & User */}
         <div className="flex items-center gap-3 min-w-[240px] justify-end">
-
           <Button
             variant="outline"
             size="sm"
@@ -151,51 +181,54 @@ export function ProjectLayout() {
 
           {/* User Menu Dropdown Trigger (Avatar) */}
           <div className="relative pl-2 border-l border-stone-200">
-             <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="w-8 h-8 rounded-full border-2 border-white bg-sage-200 flex items-center justify-center text-xs font-medium text-sage-700 hover:ring-2 hover:ring-sage-200 transition-all focus:outline-none focus:ring-2 focus:ring-sage-400"
-              >
-                {user?.nickname?.[0] || 'ME'}
-              </button>
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="w-8 h-8 rounded-full border-2 border-white bg-sage-200 flex items-center justify-center text-xs font-medium text-sage-700 hover:ring-2 hover:ring-sage-200 transition-all focus:outline-none focus:ring-2 focus:ring-sage-400"
+            >
+              {user?.nickname?.[0] || "ME"}
+            </button>
 
-             {/* Dropdown Menu */}
-             {showUserMenu && (
-                <>
-                  <div
-                    className="fixed inset-0 z-40"
-                    onClick={() => setShowUserMenu(false)}
-                  />
-                  <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border z-50 py-2 animate-in fade-in zoom-in-95">
-                    <div className="px-4 py-3 border-b">
-                      <p className="font-medium text-sm">{user?.nickname || '작가님'}</p>
-                      <p className="text-xs text-muted-foreground">{user?.email || 'user@example.com'}</p>
-                    </div>
-                    <div className="py-1">
-                      <NavLink
-                        to="/library"
-                        onClick={() => setShowUserMenu(false)}
-                        className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-stone-50 transition-colors"
-                      >
-                        <BookOpen className="h-4 w-4" />
-                        내 서재
-                      </NavLink>
-                      <button className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-stone-50 transition-colors">
-                        <User className="h-4 w-4" />
-                        프로필 설정
-                      </button>
-                    </div>
-                    <div className="border-t pt-1">
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        로그아웃
-                      </button>
-                    </div>
+            {/* Dropdown Menu */}
+            {showUserMenu && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowUserMenu(false)}
+                />
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border z-50 py-2 animate-in fade-in zoom-in-95">
+                  <div className="px-4 py-3 border-b">
+                    <p className="font-medium text-sm">
+                      {user?.nickname || "작가님"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {user?.email || "user@example.com"}
+                    </p>
                   </div>
-                </>
-              )}
+                  <div className="py-1">
+                    <NavLink
+                      to="/library"
+                      onClick={() => setShowUserMenu(false)}
+                      className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-stone-50 transition-colors"
+                    >
+                      <BookOpen className="h-4 w-4" />내 서재
+                    </NavLink>
+                    <button className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-stone-50 transition-colors">
+                      <User className="h-4 w-4" />
+                      프로필 설정
+                    </button>
+                  </div>
+                  <div className="border-t pt-1">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      로그아웃
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -215,4 +248,3 @@ export function ProjectLayout() {
     </div>
   );
 }
-
