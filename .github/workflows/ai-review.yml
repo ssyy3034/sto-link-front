@@ -1,38 +1,108 @@
 name: AI Code Review
 
 on:
+  # 코멘트로 트리거 (/review) - main 브랜치에 머지 후 동작
+  issue_comment:
+    types: [created]
+  # 라벨로 트리거 - feature 브랜치에서도 동작
   pull_request:
-    types: [opened, synchronize]
+    types: [labeled]
 
 jobs:
   ai_review:
+    if: |
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/review')) ||
+      (github.event_name == 'pull_request' && github.event.label.name == 'ai-review')
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
-      id-token: write
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Code Review with Claude
-        uses: anthropics/claude-code-action@main
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          claude_args: "--model claude-haiku-4-5-20241022"
-          prompt: |
-            You are an expert code reviewer acting as a senior software engineer for "Sto-Link", a story management platform.
+          fetch-depth: 0
 
-            **Project Context:**
-            - We are building a complex web app managing Stories, Foreshadowing, and Character Relationships.
-            - Prioritize **TypeScript type safety** and **Zustand state management efficiency**.
-            - Always consider compatibility with existing data structures (Project, Chapter, etc.) when suggesting changes.
+      - name: Get PR info
+        id: pr
+        run: |
+          if [ "${{ github.event_name }}" == "issue_comment" ]; then
+            echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          else
+            echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
 
-            **Review Guidelines:**
-            1. Focus on **critical logic errors** and **performance issues**.
-            2. Be **concise and direct**. Skip unnecessary praise or fluff.
-            3. Provide **improved code examples** immediately.
-            4. **Language**: Provide all feedback in **Korean**.
+      - name: Get changed files and diff
+        id: diff
+        run: |
+          git fetch origin main
 
-            Please review the changes in this Pull Request following these rules.
+          # 변경된 파일 목록
+          FILES=$(git diff origin/main...HEAD --name-only -- '*.ts' '*.tsx' | head -30)
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          # 실제 코드 변경 내용 (최대 300줄)
+          DIFF=$(git diff origin/main...HEAD -- '*.ts' '*.tsx' | head -500)
+          echo "$DIFF" > diff_content.txt
+
+      - name: Prepare prompt
+        id: prompt
+        run: |
+          DIFF_CONTENT=$(cat diff_content.txt | head -c 15000)
+
+          cat > prompt.json << 'PROMPT_EOF'
+          {
+            "model": "claude-haiku-4-5-20251001",
+            "max_tokens": 2048,
+            "messages": [{
+              "role": "user",
+              "content": "## 역할\nSto-Link 프로젝트의 시니어 개발자로서 코드 리뷰를 수행합니다.\n\n## 프로젝트 컨텍스트\n- 스토리, 복선, 캐릭터 관계를 관리하는 작가용 웹앱\n- 기술 스택: React, TypeScript, Zustand, TanStack Query, Tiptap\n- 핵심 타입: Project, Chapter, Character, Foreshadowing\n\n## 리뷰 기준\n1. **치명적**: 런타임 에러, 타입 오류, 보안 취약점\n2. **경고**: 성능 이슈, 안티패턴, Zustand 상태 관리 문제\n3. **제안**: 코드 스타일, 리팩토링 기회\n\n## 중점 검토 항목\n- TypeScript 타입 안전성 (any 사용, non-null assertion 남용)\n- Zustand 스토어 설계 (직렬화 가능 여부, 상태 분리)\n- React 훅 의존성 배열\n- 기존 데이터 구조와의 호환성\n\n## 변경된 파일\nFILES_PLACEHOLDER\n\n## 코드 변경 내용\n```diff\nDIFF_PLACEHOLDER\n```\n\n## 출력 형식 (이 형식만 출력, 다른 설명 금지)\n\n### 🔴 치명적 (N건)\n**파일:라인** - 이슈 제목\n- 문제: 설명\n- 개선: 코드 예시\n\n### ⚠️ 경고 (N건)\n**파일:라인** - 이슈 제목\n> 설명\n\n### 💡 제안 (N건)\n- 파일: 제안 내용\n\n(이슈 없는 카테고리는 생략, 문제 없으면 '✅ 이상 없음' 출력)"
+            }]
+          }
+          PROMPT_EOF
+
+          # Replace placeholders
+          FILES="${{ steps.diff.outputs.files }}"
+          sed -i "s|FILES_PLACEHOLDER|$FILES|g" prompt.json
+
+          # Escape diff content for JSON
+          ESCAPED_DIFF=$(echo "$DIFF_CONTENT" | jq -Rs '.')
+          # Remove quotes added by jq
+          ESCAPED_DIFF=${ESCAPED_DIFF:1:-1}
+          sed -i "s|DIFF_PLACEHOLDER|$ESCAPED_DIFF|g" prompt.json
+
+      - name: Call Claude API
+        id: review
+        run: |
+          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
+            -H "Content-Type: application/json" \
+            -H "x-api-key: ${{ secrets.ANTHROPIC_API_KEY }}" \
+            -H "anthropic-version: 2023-06-01" \
+            -d @prompt.json)
+
+          # Extract text from response
+          REVIEW=$(echo "$RESPONSE" | jq -r '.content[0].text // "리뷰 생성 실패"')
+
+          # Check for error
+          if echo "$RESPONSE" | jq -e '.error' > /dev/null 2>&1; then
+            ERROR=$(echo "$RESPONSE" | jq -r '.error.message')
+            echo "API Error: $ERROR" > review_result.txt
+          else
+            echo "$REVIEW" > review_result.txt
+          fi
+
+      - name: Post review comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const review = fs.readFileSync('review_result.txt', 'utf8');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ steps.pr.outputs.number }},
+              body: `## 🤖 AI 코드 리뷰\n\n${review}`
+            });

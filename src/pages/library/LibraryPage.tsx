@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Search, LayoutGrid, List, Filter, ArrowUpDown } from "lucide-react";
+import { motion } from "framer-motion";
+import { Footer } from "@/components/common/Footer";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -138,11 +140,26 @@ export default function LibraryPage() {
     project.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
     <div className="min-h-screen bg-paper">
       {/* Header Section */}
-      <header className="sticky top-0 z-50 bg-paper/95 backdrop-blur-sm border-b border-stone-200/50">
-        <div className="max-w-7xl mx-auto px-6 py-5">
+      <header className="sticky top-0 z-50 bg-paper/80 backdrop-blur-md border-b border-sage-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex flex-col gap-6">
             {/* Top Row: Brand & Mobile Menu */}
             <div className="flex items-center justify-between">
@@ -151,13 +168,9 @@ export default function LibraryPage() {
                   <img
                     src="/src/assets/main_logo.png"
                     alt="Sto-Link"
-                    className="h-12 w-auto"
+                    className="h-16 w-auto"
                   />
                 </div>
-                <div className="h-8 w-px bg-stone-300 mx-1 hidden sm:block"></div>
-                <span className="text-muted-foreground font-medium hidden sm:block">
-                  My Library
-                </span>
               </div>
 
               {/* Desktop Toolbar */}
@@ -167,7 +180,7 @@ export default function LibraryPage() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search title..."
-                    className="pl-9 h-9 w-[240px] bg-white border-stone-200 focus:bg-white transition-all text-sm"
+                    className="pl-9 h-9 w-[240px] bg-white border-stone-200 focus:border-sage-400 focus:ring-sage-200 transition-all text-sm rounded-full"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -229,14 +242,14 @@ export default function LibraryPage() {
                 <div className="h-6 w-px bg-stone-200 mx-1 hidden sm:block"></div>
 
                 {/* View Toggle */}
-                <div className="flex items-center rounded-md border border-stone-200 bg-white p-1">
+                <div className="flex items-center rounded-full border border-stone-200 bg-white p-1">
                   <button
                     onClick={() => setViewMode("grid")}
                     className={cn(
-                      "rounded p-1 transition-all outline-none focus:ring-2 focus:ring-primary/20",
+                      "rounded-full p-1.5 transition-all outline-none focus:ring-2 focus:ring-sage-200",
                       viewMode === "grid"
-                        ? "bg-stone-100 shadow-sm text-foreground"
-                        : "text-muted-foreground hover:text-foreground",
+                        ? "bg-sage-500 text-white shadow-sm"
+                        : "text-muted-foreground hover:text-sage-600",
                     )}
                   >
                     <LayoutGrid className="h-4 w-4" />
@@ -244,10 +257,10 @@ export default function LibraryPage() {
                   <button
                     onClick={() => setViewMode("list")}
                     className={cn(
-                      "rounded p-1 transition-all outline-none focus:ring-2 focus:ring-primary/20",
+                      "rounded-full p-1.5 transition-all outline-none focus:ring-2 focus:ring-sage-200",
                       viewMode === "list"
-                        ? "bg-stone-100 shadow-sm text-foreground"
-                        : "text-muted-foreground hover:text-foreground",
+                        ? "bg-sage-500 text-white shadow-sm"
+                        : "text-muted-foreground hover:text-sage-600",
                     )}
                   >
                     <List className="h-4 w-4" />
@@ -270,25 +283,41 @@ export default function LibraryPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8 pb-32">
-        {/* Stats Row (Optional, implied by "Stats" usually found in dash) */}
+      <main className="max-w-7xl mx-auto px-6 py-10 pb-32">
+        {/* Page Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h2 className="text-2xl font-heading font-bold text-ink inline-block border-b-2 border-sage-500 pb-1">
+            내 서재
+          </h2>
+        </motion.div>
 
-        <div
+        <motion.div
           className={cn(
-            "grid gap-6",
+            "grid gap-8",
             viewMode === "grid"
               ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
               : "grid-cols-1",
           )}
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
         >
           {/* Create New Book Card */}
-          <div className="h-full min-h-[320px]">
+          <motion.div variants={itemVariants} className="h-full min-h-[320px]">
             <CreateBookCard onClick={() => setCreateProjectModalOpen(true)} />
-          </div>
+          </motion.div>
 
           {/* Project List */}
           {filteredProjects.map((project) => (
-            <div key={project.id} className="h-full min-h-[320px]">
+            <motion.div
+              key={project.id}
+              variants={itemVariants}
+              className="h-full min-h-[320px]"
+            >
               <BookCard
                 title={project.title}
                 author={project.author || "Author"}
@@ -302,9 +331,9 @@ export default function LibraryPage() {
                 onClick={() => navigate(`/projects/${project.id}/editor`)}
                 onAction={(action) => console.log(action, project.title)}
               />
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {filteredProjects.length === 0 && searchQuery && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -320,31 +349,7 @@ export default function LibraryPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-stone-200 py-8 mt-auto bg-paper">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-400 font-medium gap-4">
-          <div className="flex items-center gap-2">
-            <img
-              src="/src/assets/main_logo.png"
-              alt="Sto-Link"
-              className="h-9 w-auto opacity-70 grayscale hover:grayscale-0 transition-all"
-            />
-            <span>•</span>
-            <span>v1.0.0</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-stone-600">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-stone-600">
-              Terms
-            </a>
-            <a href="#" className="hover:text-stone-600">
-              Help
-            </a>
-            <span>© 2024 Sto-Link Platform. All rights reserved.</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
