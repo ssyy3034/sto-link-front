@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, LayoutGrid, List } from "lucide-react";
+import { Search, LayoutGrid, List, Filter, ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,15 +9,25 @@ import { useUIStore } from "@/stores";
 import type { Project } from "@/types";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu";
 
 // Extended Mock data for UI demo
 interface ExtendedProject extends Project {
-  status: ProjectStatus | "writing" | "completed"; // Compatible types
+  status: ProjectStatus;
   coverImage?: string;
   location?: string;
   length?: string;
   progress: number;
   lastEditedText: string;
+  genre: string; // Made required for spec compliance
 }
 
 const mockProjects: ExtendedProject[] = [
@@ -28,7 +38,7 @@ const mockProjects: ExtendedProject[] = [
     description: "",
     createdAt: "",
     updatedAt: "",
-    genre: "mystery",
+    genre: "Mystery",
     author: "J.K. WRITER",
     status: "DRAFTING",
     location: "Chapter 12",
@@ -51,7 +61,7 @@ const mockProjects: ExtendedProject[] = [
     description: "",
     createdAt: "",
     updatedAt: "",
-    genre: "sf",
+    genre: "Sci-Fi",
     author: "J.K. WRITER",
     status: "OUTLINE",
     location: "15 Beats",
@@ -74,7 +84,7 @@ const mockProjects: ExtendedProject[] = [
     description: "",
     createdAt: "",
     updatedAt: "",
-    genre: "sf",
+    genre: "Sci-Fi",
     author: "J.K. WRITER",
     status: "EDITING",
     location: "Chapter 28",
@@ -82,7 +92,7 @@ const mockProjects: ExtendedProject[] = [
     progress: 92,
     lastEditedText: "3 days ago",
     coverImage:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop", // Abstract dark wave
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
     stats: {
       totalCharacters: 0,
       totalWords: 85000,
@@ -99,7 +109,7 @@ const mockProjects: ExtendedProject[] = [
     description: "",
     createdAt: "",
     updatedAt: "",
-    genre: "other",
+    genre: "Other",
     author: "NO AUTHOR",
     status: "IDEA",
     location: "3 Items",
@@ -129,53 +139,105 @@ export default function LibraryPage() {
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-paper">
       {/* Header Section */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-100">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <header className="sticky top-0 z-50 bg-paper/95 backdrop-blur-sm border-b border-stone-200/50">
+        <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex flex-col gap-6">
-            <div className="flex items-end justify-between">
-              <div>
-                <h1 className="font-outfit text-3xl font-bold text-stone-900 tracking-tight">
+            {/* Top Row: Brand & Mobile Menu */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">✒️</span>
+                </div>
+                <div>
+                  <h1 className="font-heading text-2xl font-bold text-foreground tracking-tight">
+                    Sto-Link
+                  </h1>
+                </div>
+                <div className="h-8 w-px bg-stone-300 mx-1 hidden sm:block"></div>
+                <span className="text-muted-foreground font-medium hidden sm:block">
                   My Library
-                </h1>
-                <p className="text-stone-500 mt-1">
-                  Manage your novels, drafts, and outlines.
-                </p>
+                </span>
               </div>
 
+              {/* Desktop Toolbar */}
               <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Button
-                    variant="outline"
-                    className="h-10 px-4 gap-2 bg-stone-50 border-stone-200 text-stone-600 hover:bg-stone-100 font-medium min-w-[160px] justify-between"
-                  >
-                    <span>Recent Activity</span>
-                    <svg
-                      width="10"
-                      height="6"
-                      viewBox="0 0 10 6"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1 1L5 5L9 1"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </Button>
+                {/* Search */}
+                <div className="relative hidden lg:block">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search title..."
+                    className="pl-9 h-9 w-[240px] bg-white border-stone-200 focus:bg-white transition-all text-sm"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                 </div>
-                <div className="flex items-center rounded-md border border-stone-200 bg-stone-50 p-1">
+
+                {/* Filter Button */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 gap-2 bg-white border-stone-200 text-stone-600"
+                    >
+                      <Filter className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Filter</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>Genre</DropdownMenuLabel>
+                    <DropdownMenuCheckboxItem checked>
+                      All Genres
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem>Fantasy</DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem>Romance</DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem>Sci-Fi</DropdownMenuCheckboxItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel>Status</DropdownMenuLabel>
+                    <DropdownMenuCheckboxItem checked>
+                      All Statuses
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem>
+                      Drafting
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem>
+                      Completed
+                    </DropdownMenuCheckboxItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* Sort Button */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 gap-2 bg-white border-stone-200 text-stone-600"
+                    >
+                      <ArrowUpDown className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Sort</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem>Last Modified</DropdownMenuItem>
+                    <DropdownMenuItem>Created Date</DropdownMenuItem>
+                    <DropdownMenuItem>Name (A-Z)</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <div className="h-6 w-px bg-stone-200 mx-1 hidden sm:block"></div>
+
+                {/* View Toggle */}
+                <div className="flex items-center rounded-md border border-stone-200 bg-white p-1">
                   <button
                     onClick={() => setViewMode("grid")}
                     className={cn(
-                      "rounded p-1.5 transition-all",
+                      "rounded p-1 transition-all outline-none focus:ring-2 focus:ring-primary/20",
                       viewMode === "grid"
-                        ? "bg-white shadow-sm text-stone-900"
-                        : "text-stone-400 hover:text-stone-600",
+                        ? "bg-stone-100 shadow-sm text-foreground"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
                     <LayoutGrid className="h-4 w-4" />
@@ -183,10 +245,10 @@ export default function LibraryPage() {
                   <button
                     onClick={() => setViewMode("list")}
                     className={cn(
-                      "rounded p-1.5 transition-all",
+                      "rounded p-1 transition-all outline-none focus:ring-2 focus:ring-primary/20",
                       viewMode === "list"
-                        ? "bg-white shadow-sm text-stone-900"
-                        : "text-stone-400 hover:text-stone-600",
+                        ? "bg-stone-100 shadow-sm text-foreground"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
                     <List className="h-4 w-4" />
@@ -195,48 +257,51 @@ export default function LibraryPage() {
               </div>
             </div>
 
-            <div className="relative max-w-2xl mx-auto w-full -mt-16 invisible sm:visible">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-stone-400" />
-                <Input
-                  placeholder="Search library..."
-                  className="pl-12 h-12 rounded-xl border-stone-200 bg-stone-50 focus:bg-white focus:ring-sage-400 transition-all text-base"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+            {/* Mobile Search - Row 2 */}
+            <div className="relative w-full lg:hidden">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search title..."
+                className="pl-9 h-10 w-full bg-white border-stone-200 focus:bg-white transition-all text-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-10 pb-24">
+      <main className="max-w-7xl mx-auto px-6 py-8 pb-32">
+        {/* Stats Row (Optional, implied by "Stats" usually found in dash) */}
+
         <div
           className={cn(
-            "grid gap-8",
+            "grid gap-6",
             viewMode === "grid"
               ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
               : "grid-cols-1",
           )}
         >
           {/* Create New Book Card */}
-          <div className="h-full min-h-[420px]">
+          <div className="h-full min-h-[320px]">
             <CreateBookCard onClick={() => setCreateProjectModalOpen(true)} />
           </div>
 
           {/* Project List */}
           {filteredProjects.map((project) => (
-            <div key={project.id} className="h-full min-h-[420px]">
+            <div key={project.id} className="h-full min-h-[320px]">
               <BookCard
                 title={project.title}
                 author={project.author || "Author"}
-                status={project.status as ProjectStatus}
+                status={project.status}
+                genre={project.genre}
                 coverImage={project.coverImage}
                 location={project.location}
                 length={project.length}
                 progress={project.progress}
                 lastEdited={project.lastEditedText}
                 onClick={() => navigate(`/projects/${project.id}/editor`)}
+                onAction={(action) => console.log(action, project.title)}
               />
             </div>
           ))}
@@ -256,12 +321,12 @@ export default function LibraryPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-stone-100 py-8 mt-auto bg-stone-50/50">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-xs text-stone-400 font-medium">
+      <footer className="border-t border-stone-200 py-8 mt-auto bg-paper">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-400 font-medium gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-stone-700">Sto-Link</span>
+            <span className="font-bold text-stone-600">Sto-Link</span>
             <span>•</span>
-            <span>v2.4.0</span>
+            <span>v1.0.0</span>
           </div>
           <div className="flex items-center gap-6">
             <a href="#" className="hover:text-stone-600">
@@ -273,7 +338,7 @@ export default function LibraryPage() {
             <a href="#" className="hover:text-stone-600">
               Help
             </a>
-            <span>© 2023 Sto-Link Platform. All rights reserved.</span>
+            <span>© 2024 Sto-Link Platform. All rights reserved.</span>
           </div>
         </div>
       </footer>
