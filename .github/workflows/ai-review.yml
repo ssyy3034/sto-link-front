@@ -101,7 +101,7 @@ jobs:
 
           # Use jq to generate JSON safely
           jq -n \
-            --arg model "claude-3-5-haiku-20241022" \
+            --arg model "claude-haiku-4-5-20251001" \
             --rawfile template prompt_template.txt \
             --arg files "$FILES" \
             --arg diff "$DIFF_CONTENT" \
