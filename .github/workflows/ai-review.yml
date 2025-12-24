@@ -1,18 +1,18 @@
 name: AI Code Review
 
 on:
-  # 코멘트로 트리거 (/review) - main 브랜치에 머지 후 동작
+  # 코멘트로 트리거 (/review) - 수동 실행
   issue_comment:
     types: [created]
-  # 라벨로 트리거 - feature 브랜치에서도 동작
+  # PR 생성 및 업데이트 시 자동 실행
   pull_request:
-    types: [labeled]
+    types: [opened, synchronize]
 
 jobs:
   ai_review:
     if: |
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/review')) ||
-      (github.event_name == 'pull_request' && github.event.label.name == 'ai-review')
+      (github.event_name == 'pull_request') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/review'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -50,13 +50,13 @@ jobs:
       - name: Prepare prompt
         id: prompt
         run: |
-          DIFF_CONTENT=$(cat diff_content.txt | head -c 15000 | iconv -c -f utf-8 -t utf-8)
+          DIFF_CONTENT=$(head -n 500 diff_content.txt)
           FILES="${{ steps.diff.outputs.files }}"
 
           # Create template file
           cat << 'EOF' > prompt_template.txt
           ## 역할
-          Sto-Link 프로젝트의 시니어 개발자로서 코드 리뷰를 수행합니다.
+          Sto-Link 프로젝트의 시니어 개발자이자 UI/UX 전문가로서 코드 리뷰를 수행합니다.
 
           ## 프로젝트 컨텍스트
           - 스토리, 복선, 캐릭터 관계를 관리하는 작가용 웹앱
@@ -73,6 +73,7 @@ jobs:
           - Zustand 스토어 설계 (직렬화 가능 여부, 상태 분리)
           - React 훅 의존성 배열
           - 기존 데이터 구조와의 호환성
+          - UI/UX 사용성 및 심미성 (사용자 경험, 디자인 일관성)
 
           ## 변경된 파일
           FILES_PLACEHOLDER
