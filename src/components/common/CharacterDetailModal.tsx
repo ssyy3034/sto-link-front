@@ -15,6 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Character, CharacterRole } from "@/types";
 import { cn } from "@/lib/utils";
 
+// 추가 상세 정보 섹션에서 표시할 최대 항목 수 (UX 최적화)
 const MAX_FILTERED_ITEMS = 20;
 
 interface CharacterDetailModalProps {
