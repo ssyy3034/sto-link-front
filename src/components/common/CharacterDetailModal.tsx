@@ -15,6 +15,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Character, CharacterRole } from "@/types";
 import { cn } from "@/lib/utils";
 
+const MAX_FILTERED_ITEMS = 20;
+
 interface CharacterDetailModalProps {
   character: Character | null;
   isOpen: boolean;

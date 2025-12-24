@@ -66,7 +66,6 @@ export default function StudioPage() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Imported Text from Editor */}
-                  {/* Imported Text from Editor */}
                   {selectedText ? (
                     <div className="p-4 rounded-lg border-2 border-indigo-500 bg-indigo-50/50 cursor-pointer shadow-sm ring-1 ring-indigo-200">
                       <div className="flex justify-between items-start mb-2">
